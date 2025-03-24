@@ -1,0 +1,22 @@
+{
+  "contacts": [
+    {
+      "id": "contact1",
+      "name": "Alice",
+      "profilePicture": "https://gravatar.com/avatar/36e13f837fc12b64ae7bef9b6920ffa0?s=200&d=identicon",
+      "history": [
+        {"sender": "Alice", "message": "Hey, how are you?"},
+        {"sender": "You", "message": "I'm good, thanks!"}
+      ]
+    },
+    {
+      "id": "contact2",
+      "name": "Bob",
+      "profilePicture": "https://gravatar.com/avatar/02391ace6374c636759ee156ed2df93a?s=200&d=identicon",
+      "history": [
+        {"sender": "Bob", "message": "Don't forget the meeting tomorrow."},
+        {"sender": "You", "message": "I'll be there!"}
+      ]
+    }
+  ]
+}
