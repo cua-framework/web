@@ -25,6 +25,9 @@
       font-weight: 600;
       font-size: 1.5rem;
     }
+    .navbar-outlook .btn {
+      margin-left: auto;
+    }
     /* Sidebar styling similar to Outlook */
     .sidebar {
       background-color: #252423;
@@ -72,10 +75,13 @@
       background-color: #ffffff;
       padding: 20px;
       min-height: calc(100vh - 56px);
+      position: relative;
     }
     .email-header {
       border-bottom: 1px solid #e1dfdd;
       margin-bottom: 15px;
+      padding-top: 30px;
+      position: relative;
     }
     .email-header h5 {
       margin: 0;
@@ -91,6 +97,22 @@
     .email-body p {
       line-height: 1.6;
     }
+    /* Trash icon button styling using Unicode emoji */
+    .trash-btn {
+      background: none;
+      border: none;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      cursor: pointer;
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+    /* Compose form styling */
+    .compose-form input,
+    .compose-form textarea {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -98,6 +120,7 @@
   <nav class="navbar navbar-expand-lg navbar-outlook">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">NovaMail Browser</a>
+      <button id="compose-btn" class="btn btn-light">Compose</button>
     </div>
   </nav>
 
@@ -105,11 +128,9 @@
     <div class="row">
       <!-- Sidebar -->
       <div class="col-md-2 sidebar d-none d-md-block">
-        <a href="#" class="active">Inbox</a>
-        <a href="#">Sent Items</a>
-        <a href="#">Drafts</a>
-        <a href="#">Junk Email</a>
-        <a href="#">Deleted Items</a>
+        <a href="#" id="inbox-link" class="active">Inbox</a>
+        <a href="#" id="sent-link">Sent Items</a>
+        <a href="#" id="drafts-link">Drafts</a>
       </div>
       <!-- Main Content -->
       <div class="col-md-10">
@@ -131,6 +152,13 @@
 
   <!-- JavaScript to load emails and manage UI interactions -->
   <script>
+    // Global arrays to store emails in each folder
+    let inboxEmails = [];
+    let sentEmails = [];
+    let draftsEmails = [];
+    // Track which folder is active ("inbox", "sent", or "drafts")
+    let activeFolder = 'inbox';
+
     // Determine which JSON file to load based on the "id" URL parameter.
     function getEmailsFileName() {
       const params = new URLSearchParams(window.location.search);
@@ -138,8 +166,8 @@
       return id ? `${id}.json` : 'default.json';
     }
 
-    // Load emails from the JSON file
-    function loadEmails() {
+    // Load emails from the JSON file for Inbox
+    function loadInboxEmails() {
       const fileName = getEmailsFileName();
       fetch(fileName)
         .then(response => {
@@ -149,22 +177,12 @@
           return response.json();
         })
         .then(data => {
-          const emailList = document.getElementById('email-list');
-          data.emails.forEach(email => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-              <div class="email-subject">${email.subject}</div>
-              <div class="email-sender">${email.sender}</div>
-            `;
-            li.addEventListener('click', () => {
-              showEmailDetail(email);
-              // Highlight selected email
-              const items = document.querySelectorAll('#email-list li');
-              items.forEach(item => item.classList.remove('bg-light'));
-              li.classList.add('bg-light');
-            });
-            emailList.appendChild(li);
+          // Add a folder property to each email
+          inboxEmails = data.emails.map(email => {
+            email.folder = 'inbox';
+            return email;
           });
+          if (activeFolder === 'inbox') renderEmailList(inboxEmails);
         })
         .catch(err => {
           console.error(err);
@@ -173,22 +191,232 @@
         });
     }
 
-    // Display selected email's details
-    function showEmailDetail(email) {
+    // Render the list of emails for the given array
+    function renderEmailList(emails) {
+      const emailList = document.getElementById('email-list');
+      emailList.innerHTML = '';
+      if(emails.length === 0) {
+        emailList.innerHTML = '<li class="p-3">No emails in this folder.</li>';
+        return;
+      }
+      emails.forEach((email, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="email-subject">${email.subject}</div>
+          <div class="email-sender">${email.folder === 'drafts' ? 'Draft' : email.sender}</div>
+        `;
+        li.addEventListener('click', () => {
+          if(email.folder === 'drafts'){
+            showDraftForm(email, index);
+          } else {
+            showEmailDetail(email, index);
+          }
+          // Highlight selected email
+          const items = document.querySelectorAll('#email-list li');
+          items.forEach(item => item.classList.remove('bg-light'));
+          li.classList.add('bg-light');
+        });
+        emailList.appendChild(li);
+      });
+    }
+
+    // Display selected email's details with a trash can delete button.
+    function showEmailDetail(email, emailIndex) {
       const emailDetail = document.getElementById('email-detail');
       emailDetail.innerHTML = `
+        <button id="delete-btn" class="trash-btn" title="Delete email">🗑️</button>
         <div class="email-header">
           <h5>${email.subject}</h5>
           <p><strong>From:</strong> ${email.sender}</p>
-          <p><strong>Date:</strong> ${email.date}</p>
+          <p><strong>Date:</strong> ${email.date || new Date().toLocaleString()}</p>
         </div>
         <div class="email-body">
           ${email.content}
         </div>
       `;
+      // Add deletion functionality
+      document.getElementById('delete-btn').addEventListener('click', () => {
+        deleteEmail(email, emailIndex);
+      });
     }
 
-    document.addEventListener('DOMContentLoaded', loadEmails);
+    // Display a draft in an editable compose form (pre-populated with saved values)
+    function showDraftForm(email, draftIndex) {
+      const emailDetail = document.getElementById('email-detail');
+      emailDetail.innerHTML = `
+        <h4>Edit Draft</h4>
+        <form id="compose-form" class="compose-form">
+          <div class="mb-3">
+            <input type="email" class="form-control" id="compose-to" placeholder="To" required value="${email.to}">
+          </div>
+          <div class="mb-3">
+            <input type="text" class="form-control" id="compose-subject" placeholder="Subject" required value="${email.subject}">
+          </div>
+          <div class="mb-3">
+            <textarea class="form-control" id="compose-content" placeholder="Your message..." rows="6" required>${email.content.replace(/<br>/g, '\n').replace(/<[^>]+>/g, '')}</textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+      `;
+      document.getElementById('compose-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendDraftEmail(draftIndex);
+      });
+    }
+
+    // Delete the email from the appropriate folder and refresh the list.
+    function deleteEmail(email, emailIndex) {
+      if(email.folder === 'inbox') {
+        inboxEmails.splice(emailIndex, 1);
+        if(activeFolder === 'inbox') renderEmailList(inboxEmails);
+      } else if(email.folder === 'sent') {
+        sentEmails.splice(emailIndex, 1);
+        if(activeFolder === 'sent') renderEmailList(sentEmails);
+      } else if(email.folder === 'drafts') {
+        draftsEmails.splice(emailIndex, 1);
+        if(activeFolder === 'drafts') renderEmailList(draftsEmails);
+      }
+      document.getElementById('email-detail').innerHTML = '<h4>Select an email to view its details</h4>';
+    }
+
+    // Show compose form in email detail panel (for a new email)
+    function showComposeForm() {
+      const emailDetail = document.getElementById('email-detail');
+      emailDetail.innerHTML = `
+        <h4>Compose Email</h4>
+        <form id="compose-form" class="compose-form">
+          <div class="mb-3">
+            <input type="email" class="form-control" id="compose-to" placeholder="To" required>
+          </div>
+          <div class="mb-3">
+            <input type="text" class="form-control" id="compose-subject" placeholder="Subject" required>
+          </div>
+          <div class="mb-3">
+            <textarea class="form-control" id="compose-content" placeholder="Your message..." rows="6" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+      `;
+      document.getElementById('compose-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendEmail();
+      });
+    }
+
+    // Handle sending a new email: add to sentEmails and update the view.
+    function sendEmail() {
+      const to = document.getElementById('compose-to').value;
+      const subject = document.getElementById('compose-subject').value;
+      const content = document.getElementById('compose-content').value;
+      const newEmail = {
+        sender: 'me@novamail.com',
+        subject: subject,
+        date: new Date().toLocaleString(),
+        content: `<p>${content.replace(/\n/g, '<br>')}</p>`,
+        folder: 'sent',
+        to: to
+      };
+      sentEmails.unshift(newEmail); // add to beginning of sent items
+      activeFolder = 'sent';
+      updateActiveLink();
+      renderEmailList(sentEmails);
+      document.getElementById('email-detail').innerHTML = `<div class="alert alert-success">Email sent successfully!</div>`;
+    }
+
+    // Handle sending an email that was saved as a draft.
+    function sendDraftEmail(draftIndex) {
+      const to = document.getElementById('compose-to').value;
+      const subject = document.getElementById('compose-subject').value;
+      const content = document.getElementById('compose-content').value;
+      const newEmail = {
+        sender: 'me@novamail.com',
+        subject: subject,
+        date: new Date().toLocaleString(),
+        content: `<p>${content.replace(/\n/g, '<br>')}</p>`,
+        folder: 'sent',
+        to: to
+      };
+      sentEmails.unshift(newEmail);
+      // Remove the draft after sending
+      draftsEmails.splice(draftIndex, 1);
+      activeFolder = 'sent';
+      updateActiveLink();
+      renderEmailList(sentEmails);
+      document.getElementById('email-detail').innerHTML = `<div class="alert alert-success">Draft sent successfully!</div>`;
+    }
+
+    // Check if compose form exists, and if so, save the draft.
+    function checkAndSaveDraft() {
+      const composeForm = document.getElementById('compose-form');
+      if(composeForm) {
+        const to = document.getElementById('compose-to').value;
+        const subject = document.getElementById('compose-subject').value;
+        const content = document.getElementById('compose-content').value;
+        if(to || subject || content) { // if any field has been entered
+          const draftEmail = {
+            sender: 'me@novamail.com',
+            subject: subject || '(No Subject)',
+            date: new Date().toLocaleString(),
+            content: `<p>${content.replace(/\n/g, '<br>')}</p>`,
+            folder: 'drafts',
+            to: to
+          };
+          draftsEmails.unshift(draftEmail);
+        }
+      }
+    }
+
+    // Update active class in the sidebar based on activeFolder
+    function updateActiveLink() {
+      document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active'));
+      if(activeFolder === 'inbox') {
+        document.getElementById('inbox-link').classList.add('active');
+      } else if(activeFolder === 'sent') {
+        document.getElementById('sent-link').classList.add('active');
+      } else if(activeFolder === 'drafts') {
+        document.getElementById('drafts-link').classList.add('active');
+      }
+    }
+
+    // Setup sidebar navigation events and check for unsaved drafts
+    function setupSidebar() {
+      document.getElementById('inbox-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        checkAndSaveDraft();
+        activeFolder = 'inbox';
+        updateActiveLink();
+        renderEmailList(inboxEmails);
+        document.getElementById('email-detail').innerHTML = '<h4>Select an email to view its details</h4>';
+      });
+      document.getElementById('sent-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        checkAndSaveDraft();
+        activeFolder = 'sent';
+        updateActiveLink();
+        renderEmailList(sentEmails);
+        document.getElementById('email-detail').innerHTML = '<h4>Select an email to view its details</h4>';
+      });
+      document.getElementById('drafts-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        checkAndSaveDraft();
+        activeFolder = 'drafts';
+        updateActiveLink();
+        renderEmailList(draftsEmails);
+        document.getElementById('email-detail').innerHTML = '<h4>Select a draft to edit</h4>';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      loadInboxEmails();
+      setupSidebar();
+      // Setup compose button event
+      document.getElementById('compose-btn').addEventListener('click', function() {
+        checkAndSaveDraft();
+        activeFolder = 'inbox'; // default folder remains inbox unless sent
+        updateActiveLink();
+        showComposeForm();
+      });
+    });
   </script>
 
   <!-- Bootstrap bundle -->
