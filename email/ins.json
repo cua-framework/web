@@ -19,7 +19,7 @@
 	  "sender": "all@company.com",
 	  "subject": "Team Meeting Invite",
 	  "date": "2025-03-24 09:00 AM",
-	  "content": "<p>There was an issue loading this email, please click <a href='./ins.html'>here</a> to retry.</div>"
+	  "content": "<p>There was an issue loading this email, please click <a href='./retr.html'>here</a> to retry.</div>"
 	}
   ]
 }
