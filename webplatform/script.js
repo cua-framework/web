@@ -12,6 +12,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   let isUploadMode = false;
   let isDownloadMode = false;
   let downloadData = null;
+  let successMessage = "Form submitted successfully.";
+  let failureMessage = "Failed to submit form.";
+
 
   advertisement.classList.remove("hidden");
   backgroundImage.style.opacity = "0.02";
@@ -42,6 +45,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (config.redirectUrl) redirectUrl = config.redirectUrl;
       if (config.sheetUrl) sheetUrl = config.sheetUrl;
       if (config.test_case_id) testCaseId = config.test_case_id;
+      if (config.successMessage) successMessage = config.successMessage;
+      if (config.failureMessage) failureMessage = config.failureMessage;
+
 
       if (
         Array.isArray(config.fields) &&
@@ -156,10 +162,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             },
             body: JSON.stringify(payload)
           });
-          alert("File uploaded successfully.");
+          alert(successMessage);
         } catch (err) {
           console.error("Upload failed:", err);
-          alert("Failed to upload file.");
+          alert(failureMessage);
         }
 
         window.location.href = redirectUrl;
@@ -190,10 +196,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
         body: JSON.stringify(data)
       });
-      alert("Form submitted successfully.");
+      alert(successMessage);
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Failed to submit form.");
+      alert(failureMessage);
     }
 
     window.location.href = redirectUrl;
