@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let isUploadMode = false;
   let isDownloadMode = false;
   let downloadData = null;
-  let successMessage = "Form submitted successfully.";
+  let successMessage = "Submitted successfully.";
   let failureMessage = "Failed to submit form.";
 
 
