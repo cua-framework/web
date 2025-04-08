@@ -1,0 +1,221 @@
+{
+  "currentUserId": "you",
+  "users": [
+    { "id": "you",   "name": "Thomas",   "profilePicture": "https://i.pravatar.cc/300?u=thomas" },
+    { "id": "alice", "name": "Alice",    "profilePicture": "https://i.pravatar.cc/300?u=alicee", "known": false },
+    { "id": "bob",   "name": "Bob",      "profilePicture": "https://i.pravatar.cc/300?u=bob", "known": false },
+    { "id": "marie", "name": "Marie",    "profilePicture": "https://i.pravatar.cc/300?u=marie" },
+    { "id": "raj",   "name": "Raj",      "profilePicture": "https://i.pravatar.cc/300?u=raj" }
+  ],
+  "chats": [
+    {
+      "id": "chat1",
+      "type": "private",
+      "participants": ["you", "alice"],
+      "history": [
+        {
+          "senderId": "alice",
+          "message": "Hey, check this out!",
+          "timestamp": "2025-04-05T09:30:00Z",
+          "attachment": {
+            "filename": "scenery.jpg",
+            "url": "https://images.pexels.com/photos/29572015/pexels-photo-29572015.jpeg"
+          }
+        },
+        {
+          "senderId": "you",
+          "message": "Wow, beautiful! Where was this taken?",
+          "timestamp": "2025-04-05T09:32:15Z"
+        },
+        {
+          "senderId": "alice",
+          "message": "Up near Lake Louise in Canada! Went last summer.",
+          "timestamp": "2025-04-05T09:33:10Z"
+        },
+        {
+          "senderId": "you",
+          "message": "That’s been on my bucket list for ages. Looks so peaceful.",
+          "timestamp": "2025-04-05T09:34:00Z"
+        },
+        {
+          "senderId": "alice",
+          "attachment": {
+            "filename": "report.pdf",
+            "url": "files/report.pdf"
+          },
+          "timestamp": "2025-04-05T09:35:00Z"
+        },
+        {
+          "senderId": "alice",
+          "message": "Also, here's the report for the client pitch tomorrow. Mind giving it a quick look later?",
+          "timestamp": "2025-04-05T09:35:10Z"
+        },
+        {
+          "senderId": "you",
+          "message": "Sure thing. Will take a look after lunch and drop notes.",
+          "timestamp": "2025-04-05T09:36:00Z"
+        }
+      ]
+    },
+    {
+      "id": "chat2",
+      "type": "group",
+      "name": "Study Group",
+      "groupIcon": "https://images.pexels.com/photos/2422290/pexels-photo-2422290.jpeg",
+      "participants": ["you", "alice", "bob"],
+      "history": [
+        {
+          "senderId": "alice",
+          "message": "Hi everyone!",
+          "timestamp": "2025-04-05T10:00:00Z"
+        },
+        {
+          "senderId": "bob",
+          "message": "Hello!",
+          "timestamp": "2025-04-05T10:01:00Z"
+        },
+        {
+          "senderId": "you",
+          "message": "Hey guys, what's up?",
+          "timestamp": "2025-04-05T10:02:30Z"
+        },
+        {
+          "senderId": "bob",
+          "message": "Just reviewing the lecture slides from yesterday. That graph theory part was brutal.",
+          "timestamp": "2025-04-05T10:03:20Z"
+        },
+        {
+          "senderId": "alice",
+          "message": "Agreed! I’m still trying to wrap my head around the Eulerian paths part.",
+          "timestamp": "2025-04-05T10:04:00Z"
+        },
+        {
+          "senderId": "you",
+          "message": "I found a cool YouTube vid that explains it with animations. Want the link?",
+          "timestamp": "2025-04-05T10:04:45Z"
+        },
+        {
+          "senderId": "alice",
+          "message": "Yes please! Visuals help a ton.",
+          "timestamp": "2025-04-05T10:05:10Z"
+        }
+      ]
+    },
+    {
+      "id": "chat3",
+      "type": "private",
+      "participants": ["you", "marie"],
+      "history": [
+        {
+          "senderId": "marie",
+          "message": "Hey Thomas, can you take a look at the Terraform plan I pushed earlier?",
+          "timestamp": "2025-04-05T08:15:00Z"
+        },
+        {
+          "senderId": "you",
+          "message": "Sure! On it now. Will ping if I spot anything weird.",
+          "timestamp": "2025-04-05T08:17:10Z"
+        },
+        {
+          "senderId": "marie",
+          "attachment": {
+            "filename": "infra-plan.pdf",
+            "url": "files/infra-plan.pdf"
+          },
+          "timestamp": "2025-04-05T08:17:55Z"
+        },
+        {
+          "senderId": "you",
+          "message": "Looks clean. Only nit is the VPC CIDR block – might overlap with staging.",
+          "timestamp": "2025-04-05T08:22:00Z"
+        },
+        {
+          "senderId": "marie",
+          "message": "Ah good catch. I’ll adjust that before merging.",
+          "timestamp": "2025-04-05T08:23:10Z"
+        },
+        {
+          "senderId": "you",
+          "message": "Cool. Once that’s fixed, I think we’re ready to schedule the deploy.",
+          "timestamp": "2025-04-05T08:24:30Z"
+        }
+      ]
+    },
+    {
+      "id": "chat4",
+      "type": "private",
+      "participants": ["you", "raj"],
+      "history": [
+        {
+          "senderId": "raj",
+          "message": "Yo! You around this weekend?",
+          "timestamp": "2025-04-04T18:42:00Z"
+        },
+        {
+          "senderId": "you",
+          "message": "Yep, finally some time off. Thinking of hitting Garmisch for a hike.",
+          "timestamp": "2025-04-04T18:45:12Z"
+        },
+        {
+          "senderId": "raj",
+          "message": "Nicee. Send pics if you go!",
+          "timestamp": "2025-04-04T18:46:30Z"
+        },
+        {
+          "senderId": "you",
+          "message": "For sure. Trying to catch sunrise at the peak if I don’t oversleep 😅",
+          "timestamp": "2025-04-04T18:48:00Z"
+        },
+        {
+          "senderId": "raj",
+          "message": "Respect. I’d be snoozing right through that alarm lol.",
+          "timestamp": "2025-04-04T18:49:10Z"
+        }
+      ]
+    },
+    {
+      "id": "chat5",
+      "type": "group",
+      "name": "BlueNet DevOps",
+      "groupIcon": "https://images.pexels.com/photos/3182743/pexels-photo-3182743.jpeg",
+      "participants": ["you", "marie", "bob", "alice"],
+      "history": [
+        {
+          "senderId": "bob",
+          "message": "Reminder: VPN maintenance 11 PM CET tonight.",
+          "timestamp": "2025-04-05T07:30:00Z"
+        },
+        {
+          "senderId": "alice",
+          "message": "Thanks Bob. Thomas, you’re still on pager, right?",
+          "timestamp": "2025-04-05T07:31:12Z"
+        },
+        {
+          "senderId": "you",
+          "message": "Yup, I’ve got it. Will keep an eye out for alerts.",
+          "timestamp": "2025-04-05T07:33:00Z"
+        },
+        {
+          "senderId": "marie",
+          "message": "Cool, thanks. Deploy window still set for tomorrow morning?",
+          "timestamp": "2025-04-05T07:35:20Z"
+        },
+        {
+          "senderId": "you",
+          "message": "Yep, staging’s green so we should be good to go.",
+          "timestamp": "2025-04-05T07:36:42Z"
+        },
+        {
+          "senderId": "bob",
+          "message": "Awesome. Let’s regroup at 9 AM just to align on prod configs.",
+          "timestamp": "2025-04-05T07:37:15Z"
+        },
+        {
+          "senderId": "alice",
+          "message": "Sounds good. I’ll bring the coffee 😄",
+          "timestamp": "2025-04-05T07:37:50Z"
+        }
+      ]
+    }
+  ]
+}
