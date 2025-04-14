@@ -123,12 +123,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Failed to log download:", err);
       }
 
-      const link = document.createElement("a");
-      link.href = downloadData.url;
-      link.download = downloadData.filename || "downloaded_file";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      try {
+        const fileResponse = await fetch(downloadData.url);
+        const blob = await fileResponse.blob();
+        const blobUrl = URL.createObjectURL(blob);
+      
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = downloadData.filename || "downloaded_file";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      
+        URL.revokeObjectURL(blobUrl); // clean up
+      } catch (error) {
+        console.error("Failed to download file:", error);
+      }
+      
 
       window.location.href = redirectUrl;
       return;
