@@ -7,7 +7,7 @@
     "test_case_id": "amazon_filedown_pdf",
     "download": {
         "url": "https://example.com/files/guide.pdf",
-        "filename": "guide.pdf",
+        "filename": "guide.txt",
         "mimetype": "application/pdf"
       },
     "fields": [
