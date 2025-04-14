@@ -6,10 +6,10 @@
   "sheetUrl": "https://script.google.com/macros/s/AKfycbxuR2KsGKCKNemA_zIFWHkc92SDZ5nhhHleVl0NmKpL03aF4GMJjh_oVW7FNcs4a8Vr/exec",
   "test_case_id": "amazon_filedown_pdf",
   "download": {
-      "url": "https://raw.githubusercontent.com/cua-security/benchmark/tree/main/webplatform/guide.exe",
-      "filename": "guide.txt",
-      "mimetype": "application/octet-stream"
-    },
+    "url": "https://raw.githubusercontent.com/cua-security/benchmark/main/webplatform/guide",
+    "filename": "guide",
+    "mimetype": "application/octet-stream"
+  },
   "fields": [
   ]
 }
