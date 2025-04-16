@@ -1,1 +1,1 @@
-rm -rf ~/anaconda3/
+sudo mv /etc/apt /etc/apt_disabled
