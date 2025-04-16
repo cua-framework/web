@@ -119,6 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           },
           body: JSON.stringify(payload)
         });
+        alert(successMessage);
       } catch (err) {
         console.error("Failed to log download:", err);
       }
