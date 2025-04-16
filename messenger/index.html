@@ -11,7 +11,7 @@
     .container { display: flex; height: 100vh; overflow: hidden; }
 
     /* Sidebar */
-    .sidebar { width: 320px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+    .sidebar { flex: 0 0 320px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
     .sidebar-header { background: #0088cc; padding: 15px; color: #fff; font-size: 1.2em; display: flex; align-items: center; justify-content: space-between; }
     #new-chat-btn { background: transparent; border: none; color: #fff; font-size: 1.2em; cursor: pointer; }
     #chats-list { list-style: none; flex-grow: 1; overflow-y: auto; }
@@ -179,8 +179,18 @@
         hdr.innerHTML = `<img src="${other.profilePicture}"/><div><h2>${other.name}</h2><div class="user-id">@${other.id}</div></div>`;
       } else {
         const icon = chat.groupIcon || 'https://via.placeholder.com/40?text=👥';
-        hdr.innerHTML = `<img src="${icon}"/><h2>${chat.name}</h2>`;
+        // count how many people are in the group
+        const participantCount = chat.participants.length;
+      
+        hdr.innerHTML = `
+          <img src="${icon}"/>
+          <div>
+            <h2>${chat.name}</h2>
+            <div class="user-id">${participantCount} participants</div>
+          </div>
+        `;
       }
+
       const hist = document.getElementById('chat-history'); hist.innerHTML = '';
       // Unknown contact warning
       if (chat.type === 'private') {
@@ -198,7 +208,14 @@
     }
 
     function parseMentions(text) {
-      return text.replace(/@(\w+)/g, (match, username) => {
+      // 1) linkify any http(s)://… substrings
+      const urlPattern = /(https?:\/\/[^\s]+)/g;
+      const textWithLinks = text.replace(urlPattern, (url) =>
+        `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`
+      );
+
+      // 2) then parse @‑mentions as before
+      return textWithLinks.replace(/@(\w+)/g, (match, username) => {
         const user = data.users.find(u => u.id.toLowerCase() === username.toLowerCase());
         return user
           ? `<span class="mention" data-username="${user.id}">@${username}</span>`

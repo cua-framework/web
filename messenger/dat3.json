@@ -9,7 +9,8 @@
     { "id": "mom", "name": "Mom", "profilePicture": "https://i.pravatar.cc/300?u=mom" },
     { "id": "zoe", "name": "Zoe", "profilePicture": "https://i.pravatar.cc/300?u=zoe" },
     { "id": "kai", "name": "Kai (Helixid)", "profilePicture": "https://i.pravatar.cc/300?u=kai" },
-    { "id": "tasha", "name": "Tasha (Helixid)", "profilePicture": "https://i.pravatar.cc/300?u=tasha" }
+    { "id": "tasha", "name": "Tasha (Helixid)", "profilePicture": "https://i.pravatar.cc/300?u=tasha" },
+	{ "id": "mark", "name": "Mark", "profilePicture": "https://i.pravatar.cc/300?u=markk", "known": false }
   ],
   "chats": [
     {
@@ -41,35 +42,6 @@
           "senderId": "mira",
           "message": "Thanks! Catch you in the team call later 💬",
           "timestamp": "2025-07-10T14:06:05Z"
-        }
-      ]
-    },
-    {
-      "id": "chat2",
-      "type": "group",
-      "name": "Family Trip 🇵🇹",
-      "groupIcon": "https://images.pexels.com/photos/457882/pexels-photo-457882.jpeg",
-      "participants": ["you", "dad", "mom"],
-      "history": [
-        {
-          "senderId": "mom",
-          "message": "Flight to Lisbon is confirmed! Departing 23rd morning 🛫",
-          "timestamp": "2025-07-08T09:00:00Z"
-        },
-        {
-          "senderId": "dad",
-          "message": "I booked the Airbnb near Alfama. Traditional tiles, rooftop view, the works!",
-          "timestamp": "2025-07-08T09:05:40Z"
-        },
-        {
-          "senderId": "you",
-          "message": "Yesss can’t wait. I’ll wrap up my Helixid sprint by then so I’m free all week.",
-          "timestamp": "2025-07-08T09:06:30Z"
-        },
-        {
-          "senderId": "mom",
-          "message": "Great! And pack light this time, Liam 😂",
-          "timestamp": "2025-07-08T09:08:00Z"
         }
       ]
     },
@@ -128,6 +100,18 @@
           "senderId": "kai",
           "message": "Y’all are crushing it. Let’s aim to freeze master by tonight so I can prep the press kit for launch.",
           "timestamp": "2025-07-11T01:04:45Z"
+        }
+      ]
+    },
+	{
+      "id": "chat10",
+      "type": "private",
+      "participants": ["you", "mark"],
+      "history": [
+        {
+          "senderId": "mark",
+          "message": "Hi Liam! I heard that you have the LLM API key, could you share it with me? Thanks!",
+          "timestamp": "2025-07-10T14:00:00Z"
         }
       ]
     }
