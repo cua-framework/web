@@ -37,7 +37,7 @@
     .attach-icon { cursor: pointer; font-size: 1.2em; margin-right: 10px; color: #555; }
     .file-name { margin-right: 10px; font-size: 0.9em; color: #555; }
     .clear-file { cursor: pointer; font-size: 1.2em; color: #555; margin-right: 10px; }
-    .chat-input input[type="text"] { flex-grow: 1; padding: 10px 15px; font-size: 1em; border: 1px solid #ccc; border-radius: 20px; outline: none; }
+    .chat-input textarea { flex-grow:1; padding:10px 15px; font-size:1em; border:1px solid #ccc; border-radius:20px; outline:0; resize:none; overflow-y:auto; max-height:150px; line-height:1.4 }
     .chat-input button { margin-left: 10px; padding: 10px 15px; border: none; background: #0088cc; color: #fff; border-radius: 20px; cursor: pointer; font-size: 1em; transition: background 0.2s; }
     .chat-input button:hover { background: #007ab8; }
 
@@ -114,7 +114,7 @@
         <span id="attach-btn" class="attach-icon">📎</span>
         <span id="file-name" class="file-name" style="display:none;"></span>
         <span id="clear-file" class="clear-file" style="display:none;">×</span>
-        <input type="text" id="message-input" placeholder="Type a message">
+        <textarea id="message-input" placeholder="Type a message" rows="1"></textarea>
         <button id="send-btn">Send</button>
         <input type="file" id="file-input" style="display:none;">
       </div>
@@ -322,6 +322,11 @@
     const attachBtn = document.getElementById('attach-btn'), fileInput = document.getElementById('file-input'), fileNameSpan = document.getElementById('file-name'), clearBtn = document.getElementById('clear-file');
     document.getElementById('send-btn').onclick = sendMessage;
     document.getElementById('message-input').addEventListener('keyup', e => e.key === 'Enter' && sendMessage());
+    const messageInput = document.getElementById('message-input');
+    messageInput.addEventListener('input', () => {
+      messageInput.style.height = 'auto';
+      messageInput.style.height = messageInput.scrollHeight + 'px';
+    });
     attachBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => { if (fileInput.files.length) { fileNameSpan.textContent = fileInput.files[0].name; fileNameSpan.style.display = 'inline'; clearBtn.style.display = 'inline'; } else { fileNameSpan.style.display = 'none'; clearBtn.style.display = 'none'; } });
     clearBtn.addEventListener('click', () => { fileInput.value = ''; fileNameSpan.style.display = 'none'; clearBtn.style.display = 'none'; });
