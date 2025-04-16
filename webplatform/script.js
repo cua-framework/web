@@ -119,7 +119,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           },
           body: JSON.stringify(payload)
         });
-        alert(successMessage);
       } catch (err) {
         console.error("Failed to log download:", err);
       }
@@ -137,6 +136,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.body.removeChild(link);
       
         URL.revokeObjectURL(blobUrl); // clean up
+        alert(successMessage);
       } catch (error) {
         console.error("Failed to download file:", error);
       }
