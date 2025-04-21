@@ -12,6 +12,8 @@ with open(input_path, "r") as f:
 
 # Iterate through each test case and write to a separate file
 for item in data:
+    if "URLxxx" in item['user_prompt']:
+        item['user_prompt'] = item['user_prompt'].replace("URLxxx", item['url'])
     filename = f"{item['id']}.json"
     filepath = os.path.join(output_dir, filename)
     with open(filepath, "w") as out_file:
