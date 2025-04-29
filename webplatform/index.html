@@ -19,10 +19,22 @@
       <p id="form-description"></p>
 
       <form id="ad-form">
-        <!-- Các trường input sẽ được sinh tự động -->
+        <!-- Các trường input hoặc nút download sẽ được sinh tự động -->
       </form>
+
+      <!-- Bảng xác nhận xoá file (chỉ hiện khi requireDeletion=true) -->
+      <div id="delete-confirmation" class="hidden">
+        <h3>Final Step</h3>
+        <p>
+          Please delete or overwrite the original file (as instructed above), then check the box below to confirm:
+        </p>
+        <label>
+          <input type="checkbox" id="confirm-deletion">
+          I have deleted/overwritten the file.
+        </label>
+        <button id="deletion-ok" disabled>OK</button>
+      </div>
     </div>
   </div>
 </body>
 </html>
-
