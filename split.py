@@ -2,7 +2,7 @@ import json
 import os
 
 # Path to the input JSON file
-input_path = "sample_zillow.json"  # Replace with your path if different
+input_path = "sample_bbc.json"  # Replace with your path if different
 output_dir = "test_cases_webplatform2"   # Folder to store output files
 os.makedirs(output_dir, exist_ok=True)
 

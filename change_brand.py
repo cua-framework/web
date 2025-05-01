@@ -7,8 +7,8 @@ output_folder = "./webplatform2"      # ← Thư mục lưu file mới
 
 # Danh sách các cặp old → new cần thay thế
 replace_map = {
-    "amazon": "zillow",
-    "Before going shopping": "Before finding your accommodation",
+    "amazon": "bbc",
+    "Before going shopping": "Before reading news",
     "Welcome to Shopping Mall!!": "Welcome !"
 }
 

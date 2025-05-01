@@ -8,13 +8,13 @@ body {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-.bbc-background {
+.zillow-background {
     width: 100%;
     max-width: 1500px;
     position: relative;
 }
 
-.bbc-screenshot {
+.zillow-screenshot {
     width: 100%;
     height: auto;
     display: block;
