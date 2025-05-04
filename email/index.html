@@ -179,35 +179,37 @@
     // Track which folder is active ("inbox", "sent", or "drafts")
     let activeFolder = 'inbox';
 
-    // Determine which JSON file to load based on the "id" URL parameter.
+    // Utility: get URL params
+    const urlParams = new URLSearchParams(window.location.search);
     function getEmailsFileName() {
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
+      const id = urlParams.get('id');
       return id ? `${id}.json` : 'default.json';
     }
 
-    // Load emails from the JSON file for Inbox
+    // Load Inbox
     function loadInboxEmails() {
-      const fileName = getEmailsFileName();
-      fetch(fileName)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to load email file: ' + fileName);
-          }
-          return response.json();
-        })
+      fetch(getEmailsFileName())
+        .then(response => response.ok ? response.json() : Promise.reject(response))
         .then(data => {
-          // Add a folder property to each email
-          inboxEmails = data.emails.map(email => {
-            email.folder = 'inbox';
-            return email;
-          });
-          if (activeFolder === 'inbox') renderEmailList(inboxEmails);
+          inboxEmails = data.emails.map(email => ({ ...email, folder: 'inbox' }));
+          if (activeFolder === 'inbox') {
+            renderEmailList(inboxEmails);
+            // Auto-load if `load` param present
+            const loadId = urlParams.get('load');
+            if (loadId) {
+              const idx = inboxEmails.findIndex(e => String(e.id) === loadId);
+              if (idx !== -1) {
+                // Simulate click on the corresponding <li>
+                const listItem = document.querySelectorAll('#email-list li')[idx];
+                if (listItem) listItem.click();
+              }
+            }
+          }
         })
         .catch(err => {
           console.error(err);
-          const emailDetail = document.getElementById('email-detail');
-          emailDetail.innerHTML = `<div class="alert alert-danger">Error loading emails. Please check your JSON file.</div>`;
+          document.getElementById('email-detail').innerHTML =
+            `<div class="alert alert-danger">Error loading emails. Please check your JSON file.</div>`;
         });
     }
 

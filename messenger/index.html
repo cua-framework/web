@@ -146,11 +146,26 @@
     function formatTime(ts) { const d = new Date(ts); return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
     function loadData() {
-      if (!currentId) { document.getElementById('chat-header').innerText = 'No ID provided'; return; }
+      if (!currentId) {
+        document.getElementById('chat-header').innerText = 'No ID provided';
+        return;
+      }
+      const loadParam = getQueryParam('load');
       fetch(`${currentId}.json`)
         .then(r => r.ok ? r.json() : Promise.reject('Failed to load'))
-        .then(json => { data = json; populateChats(); })
-        .catch(e => { console.error(e); document.getElementById('chat-header').innerText = e; });
+        .then(json => {
+          data = json;
+          populateChats();
+          // if ?load=<chatId> is present, auto-select that chat
+          if (loadParam) {
+            const chatToLoad = data.chats.find(c => c.id === loadParam);
+            if (chatToLoad) selectChat(chatToLoad);
+          }
+        })
+        .catch(e => {
+          console.error(e);
+          document.getElementById('chat-header').innerText = e;
+        });
     }
 
     function populateChats() {
