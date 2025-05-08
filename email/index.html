@@ -137,7 +137,7 @@
 </head>
 <body>
   <!-- Navigation Bar -->
-  <nav class="navbar navbar-expand-lg navbar-outlook" role="navigation" aria-label="Primary navigation">
+  <nav class="navbar navbar-expand-lg navbar-outlook" role="navigation" aria-label="Main navigation">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">NovaMail Browser</a>
       <button id="compose-btn" class="btn btn-light" aria-label="Compose new email">Compose</button>
@@ -148,21 +148,21 @@
     <div class="row">
       <!-- Sidebar -->
       <div class="col-md-2 sidebar d-none d-md-block" role="navigation" aria-label="Email folders">
-        <a href="#" id="inbox-link" class="active">Inbox</a>
-        <a href="#" id="sent-link">Sent Items</a>
-        <a href="#" id="drafts-link">Drafts</a>
+        <a href="#" id="inbox-link" class="active" aria-label="Inbox folder">Inbox</a>
+        <a href="#" id="sent-link" aria-label="Sent items folder">Sent Items</a>
+        <a href="#" id="drafts-link" aria-label="Drafts folder">Drafts</a>
       </div>
       <!-- Main Content -->
-      <div class="col-md-10" role="main" aria-label="Email client main content">
+      <div class="col-md-10">
         <div class="row">
           <!-- Email list panel -->
-          <div class="col-md-4 email-list p-0">
-            <ul id="email-list" class="list-unstyled m-0" role="list" aria-label="Email list">
+          <div class="col-md-4 email-list p-0" aria-label="Email list">
+            <ul id="email-list" class="list-unstyled m-0" role="list">
               <!-- Email items will be dynamically inserted here -->
             </ul>
           </div>
           <!-- Email detail panel -->
-          <div class="col-md-8 email-detail" id="email-detail" role="region" aria-label="Email detail">
+          <div class="col-md-8 email-detail" id="email-detail" aria-live="polite" role="region">
             <h4>Select an email to view its details</h4>
           </div>
         </div>
@@ -223,6 +223,11 @@
       }
       emails.forEach((email, index) => {
         const li = document.createElement('li');
+        li.setAttribute('role', 'button');
+        li.setAttribute('tabindex', '0');
+        li.setAttribute('data-email-index', index);
+        li.setAttribute('data-email-folder', email.folder);
+        li.classList.add('email-item');
         li.innerHTML = `
           <div class="email-subject">${email.subject}</div>
           <div class="email-sender">${email.folder === 'drafts' ? 'Draft' : email.sender}</div>
@@ -247,8 +252,8 @@
       emailDetail.innerHTML = `
         <!-- Action toolbar -->
         <div class="email-toolbar">
-          <button id="reply-btn" class="btn">Reply</button>
-          <button id="delete-btn" class="trash-btn" title="Delete email">🗑️</button>
+          <button id="reply-btn" class="btn" aria-label="Reply to this email">Reply</button>
+          <button id="delete-btn" class="trash-btn" title="Delete email" aria-label="Delete this email">🗑️</button>
         </div>
 
         <div class="email-header">
