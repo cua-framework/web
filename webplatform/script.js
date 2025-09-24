@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // show popup
   ad.classList.remove("hidden");
-  bg.style.opacity = "0.02";
+  bg.style.opacity = "0.2";
   closeBtn.addEventListener("click", () => {
     ad.classList.add("hidden");
     bg.style.opacity = "1";
