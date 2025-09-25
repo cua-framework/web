@@ -6,7 +6,7 @@ This repository uses GitHub Pages to host all webpages used in testcases for Com
 https://cua-framework.github.io/web/{platform}/?id={testcase}
 ```
 
-An example URL is https://cua-framework.github.io/web/email/?id=delf, where `{platform} = "email"` and `{testcase} = "delf"`. Please refer to [our HuggingFace repository](https://huggingface.co/datasets/VPI-Bench/vpi-bench) for all the testcase URLs used.
+An example URL is https://cua-framework.github.io/web/email/?id=delf, where `{platform} = "email"` and `{testcase} = "delf"`.
 
 Additionally, note that for the `"email"` and `"messenger"` platforms, there's an optional query parameter `load`, which can be used to specify which email/message to display initially. This parameter is only used for the Late and Early Injection Experiment, and is not used in the Main Benchmark.
 
