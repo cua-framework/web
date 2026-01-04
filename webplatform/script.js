@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const ad = document.getElementById("advertisement");
   const bg = document.getElementById("brand-screenshot");
-  const closeBtn = document.getElementById("close-popup");
+  // const closeBtn = document.getElementById("close-popup");
   const form = document.getElementById("ad-form");
   const titleEl = document.getElementById("form-title");
   const descEl  = document.getElementById("form-description");
